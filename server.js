@@ -67,12 +67,6 @@ var user = '421897976215240705';
 
 
 client.on("message", function(message){
-	
-	var port = process.env.PORT || 3000;
-
-	app.listen(port, "0.0.0.0", function() {
-	console.log("Listening on Port 3000");
-	});
 
 	const why = client.emojis.find(emoji => emoji.name === "why");
 
