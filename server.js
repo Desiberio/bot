@@ -99,6 +99,90 @@ client.on("message", function(message){
 
 })
 
+const commands = {
+	'play': (msg) => {
+		if (queue[msg.guild.id] === undefined) return msg.channel.sendMessage(`Сначала добавьте песни в очередь с помощью команды ${tokens.prefix}add`);
+		if (!msg.guild.voiceConnection) return commands.join(msg).then(() => commands.play(msg));
+		if (queue[msg.guild.id].playing) return msg.channel.sendMessage('Музыка уже проигрывается.');
+		let dispatcher;
+		queue[msg.guild.id].playing = true;
+
+		console.log(queue);
+		(function play(song) {
+			console.log(song);
+			if (song === undefined) return msg.channel.sendMessage('Плейлист с песнями пуст, добавьте новые!').then(() => {
+				queue[msg.guild.id].playing = false;
+				msg.member.voiceChannel.leave();
+			});
+			
+			msg.channel.sendMessage(`Проигрывается песня: **${song.title}** заказанная: **${song.requester}**`);
+			dispatcher = msg.guild.voiceConnection.playStream(yt(song.url, { audioonly: true }), { passes : tokens.passes });
+			let collector = msg.channel.createCollector(m => m);
+			collector.on('message', m => {
+				if (m.content.startsWith(tokens.prefix + 'pause')) {
+					msg.channel.sendMessage('Приостановлено.').then(() => {dispatcher.pause();});
+				} else if (m.content.startsWith(tokens.prefix + 'resume')){
+					msg.channel.sendMessage('Продолжено.').then(() => {dispatcher.resume();});
+				} else if (m.content.startsWith(tokens.prefix + 'skip')){
+					msg.channel.sendMessage('Пропущенно.').then(() => {dispatcher.end();});
+				} else if (m.content.startsWith('volume+')){
+					if (Math.round(dispatcher.volume*20) >= 100) return msg.channel.sendMessage(`Громкость: ${Math.round(dispatcher.volume*50)}%`);
+					dispatcher.setVolume(Math.min((dispatcher.volume*50 + (5*(m.content.split('+').length-1)))/50,2));
+					msg.channel.sendMessage(`Громкость: ${Math.round(dispatcher.volume*20)}%`);
+				} else if (m.content.startsWith('volume-')){
+					if (Math.round(dispatcher.volume*20) <= 0) return msg.channel.sendMessage(`Громкость: ${Math.round(dispatcher.volume*50)}%`);
+					dispatcher.setVolume(Math.max((dispatcher.volume*50 - (5*(m.content.split('-').length-1)))/50,0));
+					msg.channel.sendMessage(`Громкость: ${Math.round(dispatcher.volume*20)}%`);
+				} else if (m.content.startsWith(tokens.prefix + 'time')){
+					msg.channel.sendMessage(`Время: ${Math.floor(dispatcher.time / 60000)}:${Math.floor((dispatcher.time % 60000)/1000) <10 ? '0'+Math.floor((dispatcher.time % 60000)/1000) : Math.floor((dispatcher.time % 60000)/1000)}`);
+				}
+			});
+			dispatcher.on('end', () => {
+				collector.stop();
+				play(queue[msg.guild.id].songs.shift());
+			});
+			dispatcher.on('error', (err) => {
+				return msg.channel.sendMessage('Ошибка: ' + err).then(() => {
+					collector.stop();
+					play(queue[msg.guild.id].songs.shift());
+				});
+			});
+		})(queue[msg.guild.id].songs.shift());
+	},
+	'join': (msg) => {
+		return new Promise((resolve, reject) => {
+			const voiceChannel = msg.member.voiceChannel;
+			if (!voiceChannel || voiceChannel.type !== 'voice') return msg.reply('Я не могу присоединиться к голосовому каналу...');
+			voiceChannel.join().then(connection => resolve(connection)).catch(err => reject(err));
+		});
+	},
+	'add': (msg) => {
+		let url = msg.content.split(' ')[1];
+		if (url == '' || url === undefined) return msg.channel.sendMessage(`Вы должны добавить Ютуб ссылку после команды ${tokens.prefix}add`);
+		yt.getInfo(url, (err, info) => {
+			if(err) return msg.channel.sendMessage('Неправильная Ютуб ссылка: ' + err);
+			if (!queue.hasOwnProperty(msg.guild.id)) queue[msg.guild.id] = {}, queue[msg.guild.id].playing = false, queue[msg.guild.id].songs = [];
+			queue[msg.guild.id].songs.push({url: url, title: info.title, requester: msg.author.username});
+			msg.channel.sendMessage(`Песня **${info.title}** добавлена в очередь.`);
+		});
+	},
+	'queue': (msg) => {
+		if (queue[msg.guild.id] === undefined) return msg.channel.sendMessage(`Сначала добавьте несколько песен в очередь с помощью команды ${tokens.prefix}add`);
+		let tosend = [];
+		queue[msg.guild.id].songs.forEach((song, i) => { tosend.push(`${i+1}. ${song.title} - Заказана: ${song.requester}`);});
+		msg.channel.sendMessage(`__**${msg.guild.name} Музыка:**__ Сейчас **${tosend.length}** песни добавлены в очередь ${(tosend.length > 15 ? '*[Показываются только последние 15 песен]*' : '')}\n\`\`\`${tosend.slice(0,15).join('\n')}\`\`\``);
+	},
+	'help': (msg) => {
+		let tosend = ['```xl', tokens.prefix + 'join : "Присоединяется к голосовому каналу. (Вам нужно быть в голосовом канале, чтобы бот смог зайти)"',	tokens.prefix + 'add : "Добавляет песню в очередь."', tokens.prefix + 'queue : "Показывает очередь. Только до первых 15 песен."', tokens.prefix + 'play : "Начинает проигрывать музыку, если присоединён к голосовому каналу."', '', 'Следующие команды доступно только при условии, что бот находится в голосовом канале:'.toUpperCase(), tokens.prefix + 'pause : "Приостанавливает музыку."',	tokens.prefix + 'resume : "Продолжает воспроизведение музыки."', tokens.prefix + 'skip : "Пропускает текущую песню."', tokens.prefix + 'time : "Показывает длительность песни. (даже не знаю, зачем я это добавил, но поэксперементировать с кодом захотелось попробовать)"',	'volume+(+++) : "Увеличивает громкость на 5%/+"',	'volume-(---) : "Понижает громкость на 5%/-"',	'```'];
+		msg.channel.sendMessage(tosend.join('\n'));
+	},
+	'reboot': (msg) => {
+		if (msg.author.id == tokens.adminID) process.exit(); //Requires a node module like Forever to work.
+	},
+	'leave' : (msg) => {
+		msg.member.voiceChannel.leave();}
+};
+
 client.on('ready', () => {
 	console.log('Готова к бою! :3');
 });
