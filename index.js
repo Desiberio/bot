@@ -1,6 +1,7 @@
 
 const { Client } = require('discord.js');
 const client = new Client();
+const token = process.env.token;
 const PREFIX = '!';
 
 let queue = {};
@@ -107,4 +108,4 @@ client.on('message', msg => {
 		msg.reply('Живая!');
 	}
 });
-client.login('NDIxODk3OTc2MjE1MjQwNzA1.DrTm9Q.Xzn4xIqKf8p1SeImPhAyPp7CAWE');
+client.login(token);
