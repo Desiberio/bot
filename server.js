@@ -107,5 +107,5 @@ client.on('message', msg => {
 	if(msg.content === 'test'){
 		msg.reply('Живая!');
 	}
-});
+}).listen(process.env.PORT || 5000);
 client.login(token);
