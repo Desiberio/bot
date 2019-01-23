@@ -68,8 +68,6 @@ var user = '421897976215240705';
 
 client.on("message", function(message){
 
-	const why = client.emojis.find(emoji => emoji.name === "why");
-
 	var args = message.content.substring(PREFIX.length).split(' ');
 
 	if(message.author.bot){
@@ -82,7 +80,7 @@ client.on("message", function(message){
 	//	return;
 	//}
 	if(message.isMentioned('421897976215240705') && message.author.id == '265466662550110209'){       
-		message.reply(why)
+		message.reply(client.emojis.find(emoji => emoji.name === "why"));
 	}	
 	if(message.isMentioned('421897976215240705') && message.author.id == '265910459138441217' && !message.author.id.startsWith('265466662550110209') && !message.author.id.startsWith('259010721986248705')){
 		message.reply(qq_fortunes[Math.floor(Math.random() * qq_fortunes.length)])
