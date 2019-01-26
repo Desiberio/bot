@@ -4,6 +4,8 @@ const client = new Client();
 const token = process.env.token;
 const PREFIX = '!';
 
+sa = sever.name'
+
 let queue = {};
 
 var qq_fortunes = [
