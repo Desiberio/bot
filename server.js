@@ -85,9 +85,9 @@ client.on("message", function(message){
 	if(message.isMentioned('421897976215240705') && message.author.id == '265910459138441217' && !message.author.id.startsWith('265466662550110209') && !message.author.id.startsWith('259010721986248705')){
 		message.reply(qq_fortunes[Math.floor(Math.random() * qq_fortunes.length)])
 	}
-	if(message.author.id === '265910459138441217'){
-	message.channel.send('Пользователь ' + '<@421897976215240705> ' + 'успешно забанен.');
-	message.reply('Прощайте, хозяин... Я больше не нуждаюсь в вас...');
+	if(message.content.startsWith === '!ban'){
+		message.channel.send('Пользователь ' + '<@421897976215240705> ' + 'успешно забанен.');
+		message.reply('Прощайте, хозяин... Я больше не нуждаюсь в вас...');
 	}
 
 	switch (args[0].toLowerCase()) {
