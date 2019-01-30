@@ -79,7 +79,7 @@ client.on("message", function(message){
 	//	return;
 	//}
 	if(message.isMentioned('421897976215240705') && message.author.id == '265466662550110209'){       
-		message.reply(client.emojis.find(emoji => emoji.name === "why"))
+		message.channel.send('<:why:480099462048645170>');
 	}	
 
 	if(message.isMentioned('421897976215240705') && message.author.id == '265910459138441217' && !message.author.id.startsWith('265466662550110209') && !message.author.id.startsWith('259010721986248705')){
