@@ -53,7 +53,7 @@ var ball_fortunes = [
 	'Нет.',
 	'Возможно.'
 ];
-client.on'("message", function(message){
+client.on("message", function(message){
 
 
 	if(!userData[message.author.id]) userData[message.author.id] = {
