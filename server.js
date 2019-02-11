@@ -3,7 +3,7 @@ const client = new Client();
 const token = process.env.token;
 const PREFIX = '!';
 const fs = require('fs');
-
+`
 let queue = {};
 
 var userData = JSON.parse(fs.readFileSync('Storage/userData.json', 'utf8'));
