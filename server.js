@@ -71,8 +71,8 @@ client.on("message", function(message){
 	if(message.author.bot){
 		return;
 	};
-	if(message.content.startsWith('Страшный')){
-		message.reply('Я и не человек. <:pekaohmy:519058751261638676>')}
+	//if(message.content.startsWith('Страшный')){
+	//	message.reply('Я и не человек. <:pekaohmy:519058751261638676>')}
 	//if(!message.mentions.users.first()){ Сейчас не используется.
 	//	return;
 	//}
