@@ -7,7 +7,7 @@ const fs = require('fs');
 let queue = {};
 
 var userData = JSON.parse(fs.readFileSync('Storage/userData.json', 'utf8'));
-
+`
 var qq_fortunes = [
 	'Постойте-ка, неужели меня пинганул **тот самый** ЧСВ? Не смей больше так делать, разговаривать с тобой не приносит никого удовольствия.',
 	'Да как ты посмел, ЧСВ?'
