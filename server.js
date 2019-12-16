@@ -73,14 +73,31 @@ client.on("message", function(message){
 	if(message.author.bot){
 		return;
 	};
-	//if(message.content.startsWith('Страшный')){
-	//	message.reply('Я и не человек. <:pekaohmy:519058751261638676>')}
-	//if(!message.mentions.users.first()){ Сейчас не используется.
-	//	return;
-	//}
-	//if(message.isMentioned('421897976215240705')){
-	//	return;
-	//}
+	if(message.content.toLowerCase().startsWith('!хоч') && (message.channel.id === '531834281996189696' || message.channel.id === '520633855280021524')){
+		let Paws = message.guild.roles.get("528699380207845429");
+		message.member.addRole(Paws).catch(console.error);
+		message.reply('cпасибо за участие!')
+		client.users.get('265466662550110209').send(message.author.username)
+	};
+	if(message.channel.type === 'dm' && message.content.toLowerCase().startsWith('!об')){
+		client.users.get('265466662550110209').send(
+			"Ник - " + message.author.username +
+			"\nCамо сообщение - " + message.content +
+			"\nID - " + message.author.id
+			);
+	}
+	if(message.channel.type === 'dm' && message.content.toLowerCase().startsWith('!по')){
+		client.users.get('265466662550110209').send(
+			"Ник - " + message.author.username +
+			"\nCамо сообщение - " + message.content +
+			"\nID - " + message.author.id
+			);
+			if(message.attachments.exists){{message.attachments.forEach(a => {
+				client.users.get('265466662550110209').send("Дополнительно - " + a.proxyURL)
+			})
+		}}else (client.users.get('265466662550110209').send('Ничего.'));
+		message.reply('Cпасибо за бета-тест моих лапок! :feet:')
+	};
 	if(message.isMentioned('421897976215240705') && message.author.id == '265466662550110209'){       
 		message.channel.send('<:why:480099462048645170>');
 	}	
