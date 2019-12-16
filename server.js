@@ -96,7 +96,7 @@ client.on("message", function(message){
 				client.users.get('265466662550110209').send("Дополнительно - " + a.proxyURL)
 			})
 		}}else (client.users.get('265466662550110209').send('Ничего.'));
-		message.reply('Cпасибо за бета-тест моих лапок! :feet:')
+		message.reply('Cпасибо за пожелание! :feet:')
 	};
 	if(message.isMentioned('421897976215240705') && message.author.id == '265466662550110209'){       
 		message.channel.send('<:why:480099462048645170>');
