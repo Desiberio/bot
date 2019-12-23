@@ -74,10 +74,7 @@ client.on("message", function(message){
 		return;
 	};
 	if(message.content.toLowerCase().startsWith('!хоч') && (message.channel.id === '531834281996189696' || message.channel.id === '520633855280021524')){
-		let Paws = message.guild.roles.get("528699380207845429");
-		message.member.addRole(Paws).catch(console.error);
-		message.reply('cпасибо за участие!')
-		client.users.get('265466662550110209').send(message.author.username)
+		message.reply('Похоже, что регистрация закончилась. :с')
 	};
 	if(message.channel.type === 'dm' && message.content.toLowerCase().startsWith('!об')){
 		client.users.get('265466662550110209').send(
